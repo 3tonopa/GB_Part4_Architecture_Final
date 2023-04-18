@@ -3,21 +3,26 @@ namespace Snake
 {
     public class Player : MonoBehaviour
     {
-        public GameObject slave;
+        public GameObject lastSlave;
         public Vector3 mDirection;
+        public Vector3 lastPosition;
+        public GameObject target;
         public bool step = true;
+        public bool imprit = false;
         public float timestamp;
         private void Awake()
         {
+            lastPosition = transform.position;
+            lastSlave = this.gameObject;
             mDirection = Vector3.right;
             timestamp = Time.time;
-            slave = this.gameObject;
         }
-        
+
         private void Update()
         {
             Direction();
             Movement();
+            Imprit();
             StepCounter();
         }
         private void Direction()
@@ -35,28 +40,47 @@ namespace Snake
         {
             if (step)
             {
-                transform.position = transform.position + mDirection/2;
+                lastPosition = transform.position;
+                transform.position = transform.position + mDirection / 2;
                 step = false;
+                Target[] slaves = FindObjectsOfType<Target>();
+                for (int i = 0; i < slaves.Length; i++)
+                {
+                    slaves[i].Move();
+                }
                 timestamp = Time.time;
             }
         }
         private void StepCounter()
         {
-            if (Time.time > timestamp + 0.5f )
+            if (Time.time > timestamp + FindObjectOfType<Launcher>().nextTime)
                 step = true;
+        }
+        private void Imprit()
+        {
+            if (imprit)
+            {
+                target.AddComponent<Target>().master = lastSlave;
+                lastSlave = target;
+                FindObjectOfType<Launcher>().deploy = true;
+                FindObjectOfType<Launcher>().score += 1;
+                imprit = false;
+            }
         }
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if(other.gameObject.tag == "wall")
+            if (other.gameObject.tag == "wall" || other.gameObject.tag == "slave")
             {
-                Time.timeScale = 0;
-                new GameOver();
+
+                FindObjectOfType<Launcher>().GameOver();
             }
-            if(other.gameObject.tag == "target")
+            if (other.gameObject.tag == "target")
             {
-                slave = other.gameObject;
+                target = other.gameObject;
+                Debug.Log(target.name);
+                imprit = true;
             }
-                
+
         }
     }
 }

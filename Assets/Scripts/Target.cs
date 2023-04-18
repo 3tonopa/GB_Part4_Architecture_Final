@@ -5,29 +5,27 @@ namespace Snake
     {
         public GameObject master;
         public Vector3 mDirection;
-        public bool active = false;
-        public float timestamp;
-        private void Awake()
+        public Vector3 lastPosition;
+       
+        private void Start()
         {
-
+            this.gameObject.tag = "slave";
+            lastPosition = master.transform.position;
+            Debug.Log(master.name);
         }
 
-        private void Update()
+        public void Move()
         {
             if (master != null)
             {
-                transform.position = master.transform.position - FindObjectOfType<Player>().mDirection/2;
-            }
-        }
-            
+                Vector3 destination;
+                if (master.GetComponent<Player>() != null)
+                    destination = master.GetComponent<Player>().lastPosition;
+                else
+                    destination = master.GetComponent<Target>().lastPosition;
 
-        private void OnCollisionEnter2D(Collision2D other)
-        {
-            if (other.gameObject.tag == "Player" && !active)
-            {
-                master = other.gameObject.GetComponent<Player>().slave;
-                FindObjectOfType<Launcher>().deploy = true;
-                active = true;
+                transform.position = destination;
+                lastPosition = transform.position;
             }
         }
     }
