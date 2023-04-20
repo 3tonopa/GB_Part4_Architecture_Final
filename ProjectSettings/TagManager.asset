@@ -6,6 +6,7 @@ TagManager:
   tags:
   - wall
   - target
+  - slave
   layers:
   - Default
   - TransparentFX

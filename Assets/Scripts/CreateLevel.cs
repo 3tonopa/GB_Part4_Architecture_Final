@@ -35,7 +35,7 @@ namespace Snake
             {
                 walls[i].AddComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Square");
 
-                walls[i].GetComponent<SpriteRenderer>().color = Color.grey;
+                walls[i].GetComponent<SpriteRenderer>().color = Color.red;
                 Rigidbody2D iRigidbody = walls[i].AddComponent<Rigidbody2D>();
                 walls[i].AddComponent<BoxCollider2D>();
                 iRigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
